@@ -43,7 +43,6 @@ object VerticalBoxBlur {
    *  bottom.
    */
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit = {
-    // TODO implement this method using the `boxBlurKernel` method
     from until end foreach { x =>
       0 until src.height foreach { y =>
         val blurredRgba = boxBlurKernel(src, x, y, radius)
@@ -59,8 +58,15 @@ object VerticalBoxBlur {
    *  columns.
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-    // TODO implement using the `task` construct and the `blur` method
-    ???
+    val indices = 0.to(src.width, src.width / numTasks)
+    val parTasks = 0 until (numTasks - 1) map { numTask =>
+      val (from, end) = (indices(numTask), indices(numTask + 1))
+      task { blur(src, dst, from, end, radius)}
+    }
+    blur(src, dst, indices(numTasks - 1), src.width, radius)
+    parTasks.foreach { task =>
+      task.join()
+    }
   }
 
 }
