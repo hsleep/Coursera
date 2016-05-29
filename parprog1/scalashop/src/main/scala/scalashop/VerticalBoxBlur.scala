@@ -44,7 +44,12 @@ object VerticalBoxBlur {
    */
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit = {
     // TODO implement this method using the `boxBlurKernel` method
-    ???
+    from until end foreach { x =>
+      0 until src.height foreach { y =>
+        val blurredRgba = boxBlurKernel(src, x, y, radius)
+        dst.update(x, y, blurredRgba)
+      }
+    }
   }
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.
