@@ -57,8 +57,10 @@ object HorizontalBoxBlur {
     *  rows.
     */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-    val availableTasks = math.min(src.height, numTasks)
-    val indices = 0.to(src.height, src.height / availableTasks)
+    val range = src.height
+    val availableTasks = math.min(range, numTasks)
+    val interval = range / availableTasks
+    val indices = (0 until availableTasks).map(i => i * interval) ++ Seq(range)
     val parTasks = 0 until availableTasks map { numTask =>
       val (from, end) = (indices(numTask), indices(numTask + 1))
       task { blur(src, dst, from, end, radius)}
