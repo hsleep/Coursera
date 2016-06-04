@@ -46,7 +46,16 @@ object ParallelCountChange {
    *  coins for the specified amount of money.
    */
   def countChange(money: Int, coins: List[Int]): Int = {
-    ???
+    def loop(money: Int, coins: List[Int], acc: Int = 0): Int = {
+      money match {
+        case 0 => acc + 1
+        case x if x < 0 => acc
+        case _ => loop(money - coins.head, coins, acc + countChange(money, coins.tail))
+      }
+    }
+    if (money == 0) 1
+    else if (money < 0 || coins.isEmpty) 0
+    else loop(money, coins)
   }
 
   type Threshold = (Int, List[Int]) => Boolean
@@ -55,20 +64,33 @@ object ParallelCountChange {
    *  specified list of coins for the specified amount of money.
    */
   def parCountChange(money: Int, coins: List[Int], threshold: Threshold): Int = {
-    ???
+    // run sequential algorithm if threshold return true
+    if (money <= 0 || coins.isEmpty || threshold(money, coins)) {
+      countChange(money, coins)
+    } else {
+      val (a, b) = parallel(parCountChange(money - coins.head, coins, threshold), parCountChange(money, coins.tail, threshold))
+      a + b
+    }
   }
 
   /** Threshold heuristic based on the starting money. */
-  def moneyThreshold(startingMoney: Int): Threshold =
-    ???
+  def moneyThreshold(startingMoney: Int): Threshold = {
+    // returns true when the amount of money is less than or equal to 2 / 3 of the starting amount
+    (money: Int, coins: List[Int]) => money <= startingMoney * 2 / 3
+  }
 
   /** Threshold heuristic based on the total number of initial coins. */
-  def totalCoinsThreshold(totalCoins: Int): Threshold =
-    ???
+  def totalCoinsThreshold(totalCoins: Int): Threshold = {
+    // returns true when the number of coins is less than or equal to the 2 / 3 of the initial number of coins
+    (money: Int, coins: List[Int]) => coins.length <= totalCoins * 2 / 3
+  }
 
 
   /** Threshold heuristic based on the starting money and the initial list of coins. */
   def combinedThreshold(startingMoney: Int, allCoins: List[Int]): Threshold = {
-    ???
+    // returns true when
+    // the amount of money multiplied with the number of remaining coins is less than or equal to
+    // the starting money multiplied with the initial number of coins divided by 2
+    (money: Int, coins: List[Int]) => money * coins.length <= startingMoney * allCoins.length / 2
   }
 }
