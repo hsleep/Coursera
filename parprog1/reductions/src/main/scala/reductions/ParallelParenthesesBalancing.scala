@@ -71,7 +71,6 @@ object ParallelParenthesesBalancing {
     }
 
     def reduce(from: Int, until: Int): (Int, Int) = {
-      println(s"from: $from, until: $until")
       val size = until - from
       if (size < threshold) {
         traverse(from, until, 0, 0)
