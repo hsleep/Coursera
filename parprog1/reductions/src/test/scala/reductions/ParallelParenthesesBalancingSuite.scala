@@ -45,5 +45,37 @@ class ParallelParenthesesBalancingSuite extends FunSuite {
     check(").", false)
   }
 
+  // sequential
+  test("balance: '(if (zero? x) max (/ 1 x))' is balanced") {
+    assert(balance("(if (zero? x) max (/ 1 x))".toCharArray))
+  }
 
+  test("balance: 'I told him ...' is balanced") {
+    assert(balance("I told him (that it's not (yet) done).\n(But he wasn't listening)".toCharArray))
+  }
+
+  test("balance: ':-)' is unbalanced") {
+    assert(!balance(":-)".toCharArray))
+  }
+
+  test("balance: counting is not enough") {
+    assert(!balance("())(".toCharArray))
+  }
+
+  // parallel
+  test("parBalance: '(if (zero? x) max (/ 1 x))' is balanced") {
+    assert(parBalance("(if (zero? x) max (/ 1 x))".toCharArray, 2))
+  }
+
+  test("parBalance: 'I told him ...' is parBalanced") {
+    assert(parBalance("I told him (that it's not (yet) done).\n(But he wasn't listening)".toCharArray, 2))
+  }
+
+  test("parBalance: ':-)' is unBalanced") {
+    assert(!parBalance(":-)".toCharArray, 2))
+  }
+
+  test("parBalance: counting is not enough") {
+    assert(!parBalance("())(".toCharArray, 2))
+  }
 }
