@@ -72,12 +72,9 @@ object ParallelParenthesesBalancing {
 
     def reduce(from: Int, until: Int): (Int, Int) = {
       val size = until - from
-      if (size < threshold) {
-        traverse(from, until, 0, 0)
-      }
-      else {
-        val halfOfSize = size / 2
-        val ((a1, a2), (b1, b2)) = parallel(reduce(from, from + halfOfSize), reduce(from + halfOfSize, until))
+      if (size > threshold) {
+        val halfSize = size / 2
+        val ((a1, a2), (b1, b2)) = parallel(reduce(from, from + halfSize), reduce(from + halfSize, until))
         if (a1 > b2) {
           // )))((())(( => )))(((
           (a1 - b2 + b1) -> a2
@@ -85,6 +82,9 @@ object ParallelParenthesesBalancing {
           // )))(()))(( => ))))((
           b1 -> (b2 - a1 + a2)
         }
+      }
+      else {
+        traverse(from, until, 0, 0)
       }
     }
 

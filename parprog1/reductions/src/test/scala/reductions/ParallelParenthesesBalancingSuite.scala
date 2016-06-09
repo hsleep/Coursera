@@ -78,4 +78,8 @@ class ParallelParenthesesBalancingSuite extends FunSuite {
   test("parBalance: counting is not enough") {
     assert(!parBalance("())(".toCharArray, 2))
   }
+
+  test("parBalance: should work for string of length 2 and threshold 1") {
+    assert(parBalance("()".toCharArray, 1))
+  }
 }
