@@ -213,23 +213,18 @@ object Huffman {
     * into a sequence of bits.
     */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
-    def encodeInner(subTree: CodeTree)(subText: List[Char], agg: List[Bit]): List[Bit] = {
-      if (subText.isEmpty) agg
-      else {
-        assert(chars(subTree).contains(subText.head))
-        val Fork(left, right, _, _) = subTree
-        val (bit, selected) = if (chars(left).contains(subText.head)) {
-          0 -> left
-        } else {
-          1 -> right
-        }
-        selected match {
-          case _: Leaf => encodeInner(tree)(subText.tail, agg :+ bit)
-          case _: Fork => encodeInner(selected)(subText.tail, agg :+ bit)
-        }
+    def encodeInner(subTree: CodeTree, char: Char, agg: List[Bit] = Nil): List[Bit] = {
+      subTree match {
+        case _: Leaf => agg
+        case Fork(left, right, _, _) =>
+          if (chars(left).contains(char)) encodeInner(left, char, agg :+ 0)
+          else encodeInner(right, char, agg :+ 1)
       }
     }
-    encodeInner(tree)(text, Nil)
+    for {
+      c <- text
+      bit <- encodeInner(tree, c)
+    } yield bit
   }
 
   // Part 4b: Encoding using code table
