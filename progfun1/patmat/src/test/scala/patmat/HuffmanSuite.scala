@@ -51,4 +51,8 @@ class HuffmanSuite extends FunSuite {
     }
   }
 
+
+  test("decodedSecret is huffmanestcool") {
+    assert(decodedSecret === string2Chars("huffmanestcool"))
+  }
 }
