@@ -12,6 +12,8 @@ class HuffmanSuite extends FunSuite {
 	trait TestTrees {
 		val t1 = Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5)
 		val t2 = Fork(Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5), Leaf('d',4), List('a','b','d'), 9)
+    val c1 = List('a' -> List(0), 'b' -> List(1))
+    val c2 = List('a' -> List(0, 0), 'b' -> List(0, 1), 'd' -> List(1))
 	}
 
 
@@ -54,5 +56,31 @@ class HuffmanSuite extends FunSuite {
 
   test("decodedSecret is huffmanestcool") {
     assert(decodedSecret === string2Chars("huffmanestcool"))
+  }
+
+
+  test("convert t1") {
+    new TestTrees {
+      assert(convert(t1) === c1)
+    }
+  }
+
+
+  test("convert t2") {
+    new TestTrees {
+      assert(convert(t2) === c2)
+    }
+  }
+
+
+  test("quick encode") {
+    new TestTrees {
+      assert(decode(t1, quickEncode(t1)("ab".toList)) === "ab".toList)
+    }
+  }
+
+
+  test("quick encode huffmanestcool") {
+    assert(secret === quickEncode(frenchCode)(string2Chars("huffmanestcool")))
   }
 }
