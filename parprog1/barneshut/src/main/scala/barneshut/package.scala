@@ -59,8 +59,8 @@ package object barneshut {
     val centerY: Float = (nw.centerY + sw.centerY) / 2
     val size: Float = nw.size + ne.size
     val mass: Float = quads.map(_.mass).sum
-    val massX: Float = quads.map(q => q.mass * q.massX).sum / mass
-    val massY: Float = quads.map(q => q.mass * q.massY).sum / mass
+    val massX: Float = if (mass == 0) centerX else quads.map(q => q.mass * q.massX).sum / mass
+    val massY: Float = if (mass == 0) centerY else quads.map(q => q.mass * q.massY).sum / mass
     val total: Int = quads.map(_.total).sum
 
     def insert(b: Body): Fork = {
@@ -82,7 +82,8 @@ package object barneshut {
     val massY = bodies.map(b => b.mass * b.y).sum / mass
     val total: Int = bodies.length
     def insert(b: Body): Quad = {
-      if (size < minimumSize) copy(bodies = bodies :+ b)
+      val newBodies = bodies :+ b
+      if (size <= minimumSize) copy(bodies = newBodies)
       else {
         val quadSize = size / 4
         val halfSize = size / 2
@@ -90,7 +91,7 @@ package object barneshut {
         val ne = Empty(centerX + quadSize, centerY - quadSize, halfSize)
         val sw = Empty(centerX - quadSize, centerY + quadSize, halfSize)
         val se = Empty(centerX + quadSize, centerY + quadSize, halfSize)
-        Fork(nw, ne, sw, se).insert(bodies.head)
+        newBodies.foldLeft(Fork(nw, ne, sw, se))((agg, body) => agg.insert(body))
       }
     }
   }
@@ -147,13 +148,12 @@ package object barneshut {
           // add force contribution of each body by calling addForce
           bodies.foreach(b => addForce(b.mass, b.x, b.y))
         case Fork(nw, ne, sw, se) =>
-          Seq(nw, ne, sw, se).foreach { q =>
-            val dist = distance(q.massX, q.massY, x, y)
-            if (q.size / dist < theta) {
-              // see if node is far enough from the body,
-              addForce(q.mass, q.massX, q.massY)
-            } else {
-              // or recursion is needed
+          val dist = distance(quad.massX, quad.massY, x, y)
+          if (quad.size / dist < theta) {
+            // see if node is far enough from the body,
+            addForce(quad.mass, quad.massX, quad.massY)
+          } else {
+            Seq(nw, ne, sw, se).foreach { q =>
               traverse(q)
             }
           }
@@ -188,7 +188,7 @@ package object barneshut {
     def apply(x: Int, y: Int) = matrix(y * sectorPrecision + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      for (i <- 0 until matrix.length) matrix(i).combine(that.matrix(i))
+      for (i <- 0 until matrix.length) matrix(i) = matrix(i).combine(that.matrix(i))
       this
     }
 

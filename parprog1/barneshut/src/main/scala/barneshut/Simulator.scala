@@ -36,9 +36,7 @@ class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
   def computeSectorMatrix(bodies: Seq[Body], boundaries: Boundaries): SectorMatrix = timeStats.timed("matrix") {
     val parBodies = bodies.par
     parBodies.tasksupport = taskSupport
-    parBodies.foldLeft(new SectorMatrix(boundaries, SECTOR_PRECISION)) { (agg, b) =>
-      agg += b
-    }
+    parBodies.aggregate(new SectorMatrix(boundaries, SECTOR_PRECISION))((agg, b) => agg += b, (a, b) => a.combine(b))
   }
 
   def computeQuad(sectorMatrix: SectorMatrix): Quad = timeStats.timed("quad") {
