@@ -112,6 +112,7 @@ package object barneshut {
   }
 
   class Body(val mass: Float, val x: Float, val y: Float, val xspeed: Float, val yspeed: Float) {
+    override def toString: String = s"(mass: $mass, x: $x, y: $y, xspeed: $xspeed, yspeed: $yspeed)"
 
     def updated(quad: Quad): Body = {
       var netforcex = 0.0f
@@ -180,7 +181,7 @@ package object barneshut {
     def +=(b: Body): SectorMatrix = {
       val x = math.min(math.max(boundaries.minX, b.x), boundaries.maxX)
       val y = math.min(math.max(boundaries.minY, b.y), boundaries.maxY)
-      apply(x / sectorSize toInt, y / sectorSize toInt) += b
+      apply((x - boundaries.minX) / sectorSize toInt, (y - boundaries.minY) / sectorSize toInt) += b
       this
     }
 
