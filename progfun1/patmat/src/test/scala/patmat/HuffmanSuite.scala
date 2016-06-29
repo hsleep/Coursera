@@ -54,12 +54,28 @@ class HuffmanSuite extends FunSuite {
 
 
   test("createCodeTree optimal") {
-    println(createCodeTree(string2Chars("aaaaaaaabbbcdefgh")))
-    new TestTrees {
-      assert(createCodeTree(string2Chars("aabbb")) === t1)
-      assert(createCodeTree(string2Chars("bbbaa")) === t1)
-      assert(createCodeTree(string2Chars("bdbdbdada")) === t2)
-    }
+    val t = Fork(
+      Leaf('a',8),
+      Fork(
+        Fork(
+          Fork(Leaf('e',1),Leaf('f',1),List('e', 'f'),2),
+          Fork(Leaf('g',1),Leaf('c',1),List('g', 'c'),2),
+          List('e', 'f', 'g', 'c'),
+          4
+        ),
+        Fork(
+          Fork(Leaf('h',1),Leaf('d',1),List('h', 'd'),2),
+          Leaf('b',3),
+          List('h', 'd', 'b'),
+          5
+        ),
+        List('e', 'f', 'g', 'c', 'h', 'd', 'b'),
+        9
+      ),
+      List('a', 'e', 'f', 'g', 'c', 'h', 'd', 'b'),
+      17
+    )
+    assert(createCodeTree(string2Chars("aaaaaaaabbbcdefgh")) === t)
   }
 
 

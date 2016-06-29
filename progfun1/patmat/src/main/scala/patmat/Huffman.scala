@@ -112,9 +112,13 @@ object Huffman {
     trees match {
       case head::mid::tail =>
         val newTree = makeCodeTree(head, mid)
-        val insertIndex = tail.indexWhere(tree => weight(newTree) < weight(tree))
-        val (left, right) = tail.splitAt(insertIndex)
-        left ::: List(newTree) ::: right
+        tail.indexWhere(tree => weight(newTree) < weight(tree)) match {
+          case -1 =>
+            tail ::: List(newTree)
+          case insertIndex =>
+            val (left, right) = tail.splitAt(insertIndex)
+            left ::: List(newTree) ::: right
+        }
       case _ =>
         trees
     }
