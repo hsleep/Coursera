@@ -154,9 +154,7 @@ object Huffman {
     */
   def createCodeTree(chars: List[Char]): CodeTree = {
     val initialTree = makeOrderedLeafList(times(chars))
-    val rtn = until(singleton, combine)(initialTree).head
-    println(rtn)
-    rtn
+    until(singleton, combine)(initialTree).head
   }
 
 
