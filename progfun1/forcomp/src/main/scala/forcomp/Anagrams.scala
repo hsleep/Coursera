@@ -171,11 +171,36 @@ object Anagrams {
    */
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
     val initialOccurrences = sentenceOccurrences(sentence)
-//    for {
-//      o <- combinations(initialOccurrences)
-//    }
-    def find(occurrences: Occurrences): List[Word] = {
-      dictionaryByOccurrences.getOrElse(occurrences, Nil)
+    for {
+      o <- combinations(initialOccurrences)
+    }
+    def find(occurrences: Occurrences): List[Word] = dictionaryByOccurrences.getOrElse(occurrences, Nil)
+    /**
+      *
+      * @param initial
+      * @param occurrences
+      * @param agg
+      * @return
+      */
+    def findRec(initial: Occurrences, occurrences: Occurrences, agg: List[Sentence] = List(Nil)): List[Sentence] = {
+      for {
+        o <- combinations(initial)
+        sentence <- findRec()
+      }
+      find(occurrences) match {
+        case words: List[Word] =>
+          val nextAgg = for {
+            sentence <- agg
+            w <- words
+          } yield sentence :+ w
+          val nextInitial = subtract(initial, occurrences)
+          for {
+            o <- combinations(nextInitial)
+            sentence <- findRec(nextInitial, o, nextAgg)
+          } yield sentence
+        case Nil =>
+          Nil
+      }
     }
   }
 }
