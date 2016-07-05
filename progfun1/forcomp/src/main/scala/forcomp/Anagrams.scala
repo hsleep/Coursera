@@ -170,37 +170,22 @@ object Anagrams {
    *  Note: There is only one anagram of an empty sentence.
    */
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-    val initialOccurrences = sentenceOccurrences(sentence)
-    for {
-      o <- combinations(initialOccurrences)
-    }
-    def find(occurrences: Occurrences): List[Word] = dictionaryByOccurrences.getOrElse(occurrences, Nil)
-    /**
-      *
-      * @param initial
-      * @param occurrences
-      * @param agg
-      * @return
-      */
-    def findRec(initial: Occurrences, occurrences: Occurrences, agg: List[Sentence] = List(Nil)): List[Sentence] = {
-      for {
-        o <- combinations(initial)
-        sentence <- findRec()
-      }
-      find(occurrences) match {
-        case words: List[Word] =>
-          val nextAgg = for {
-            sentence <- agg
-            w <- words
-          } yield sentence :+ w
-          val nextInitial = subtract(initial, occurrences)
-          for {
-            o <- combinations(nextInitial)
-            sentence <- findRec(nextInitial, o, nextAgg)
-          } yield sentence
-        case Nil =>
-          Nil
+    /*
+    initial, comb -> List(sentence)
+    initial - 0, comb -> List(sentence)
+     */
+    def findAnagrams(initial: Occurrences, agg: List[Sentence] = List(Nil)): List[Sentence] = {
+      if (initial.isEmpty) {
+        agg
+      } else {
+        for {
+          o <- combinations(initial)
+          w <- dictionaryByOccurrences.getOrElse(o, Nil)
+          prev <- agg
+          sentence <- findAnagrams(subtract(initial, o), List(prev :+ w))
+        } yield sentence
       }
     }
+    findAnagrams(sentenceOccurrences(sentence))
   }
 }
