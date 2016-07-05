@@ -100,4 +100,12 @@ class AnagramsSuite extends FunSuite  {
     assert(sentenceAnagrams(sentence).toSet === anas.toSet)
   }
 
+//  test("cache key test") {
+//    assert((List(('l',1), ('r',1), ('u',2), ('z',1)),List(List("Lin", "ex"))) === (List(('l',1), ('r',1), ('u',2), ('z',1)),List(List("Lin", "ex"))))
+//  }
+//
+//  test("sentence anagrmas memo: Linux rulez") {
+//    val sentence = List("Linux", "rulez")
+//    assert(sentenceAnagrams(sentence).toSet === sentenceAnagramsMemo(sentence).toSet)
+//  }
 }

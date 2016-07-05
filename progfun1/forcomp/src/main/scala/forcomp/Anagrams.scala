@@ -1,5 +1,7 @@
 package forcomp
 
+import scala.collection.mutable
+
 
 object Anagrams {
 
@@ -174,7 +176,9 @@ object Anagrams {
     initial, comb -> List(sentence)
     initial - 0, comb -> List(sentence)
      */
+//    var callCount = 0
     def findAnagrams(initial: Occurrences, agg: List[Sentence] = List(Nil)): List[Sentence] = {
+//      callCount += 1
       if (initial.isEmpty) {
         agg
       } else {
@@ -186,6 +190,35 @@ object Anagrams {
         } yield sentence
       }
     }
-    findAnagrams(sentenceOccurrences(sentence))
+
+    val rtn = findAnagrams(sentenceOccurrences(sentence))
+//    println(s"sentenceAnagrams. callCount: $callCount")
+    rtn
   }
+
+//  def sentenceAnagramsMemo(sentence: Sentence): List[Sentence] = {
+//    var callCount = 0
+//    val cache = mutable.Map.empty[Occurrences, List[Sentence]]
+//    def findAnagrams(initial: Occurrences, agg: List[Sentence] = List(Nil)): List[Sentence] = {
+//      cache.getOrElse(initial, {
+//        callCount += 1
+//        if (initial.isEmpty) {
+//          agg
+//        } else {
+//          val sentences = for {
+//            o <- combinations(initial)
+//            w <- dictionaryByOccurrences.getOrElse(o, Nil)
+//            prev <- agg
+//            sentence <- findAnagrams(subtract(initial, o), List(prev :+ w))
+//          } yield sentence
+//          cache.put(initial, sentences)
+//          sentences
+//        }
+//      })
+//    }
+//
+//    val rtn = findAnagrams(sentenceOccurrences(sentence))
+//    println(s"sentenceAnagramsMemo. callCount: $callCount, cache: ${cache.filterKeys(x => x == List(('l',1), ('r',1), ('u',2), ('z',1)))}")
+//    rtn
+//  }
 }
